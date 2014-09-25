@@ -11,6 +11,16 @@
     font-weight: 400;
     font-style: normal;
 }
+@font-face{
+    font-family: 'Fira Mono';
+    src: url('FiraMono-Bold.eot');
+    src: local('Fira Mono'),
+         url('FiraMono-Bold.eot') format('embedded-opentype'),
+         url('FiraMono-Bold.woff') format('woff'),
+         url('FiraMono-Bold.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
 
 * {
   margin: 0;
