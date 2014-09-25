@@ -1,6 +1,7 @@
 # Site settings
 title: Patalyze
 email: your-email@domain.com
+exclude: [ "s3_website.yml" ]
 description: "Patalyze is an experimental project exploring publicly available patent data."
 baseurl: ""
 url: "http://yourdomain.com"
