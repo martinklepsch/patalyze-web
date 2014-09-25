@@ -45,10 +45,6 @@ a:visited { color: #205caa; }
   zoom: 1;
 }
 
-
-/* Layout Styles */
-/* ----------------------------------------------------------*/
-
 /* Page Content styles */
 /* ----------------------------------------------------------*/
 
@@ -59,3 +55,6 @@ a:visited { color: #205caa; }
 p {
   margin: 1.4em 0;
 }
+
+#mc_embed_signup { display: none }
+#mc_embed_signup.visible { display: block }
