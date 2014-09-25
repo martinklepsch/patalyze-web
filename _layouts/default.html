@@ -15,6 +15,65 @@
 
     </body>
     <script>
+    function forEachNode(nodeList, func)
+    {
+        var i, n = nodeList.length;
+        for (i=0; i<n; i++)
+        {
+            func(nodeList[i], i, nodeList);
+        }
+    }
+
+    window.addEventListener('load', mInit, false);
+
+    function typeWriter(el)
+    {
+        var myDelay = el.getAttribute('keyDelay');
+
+        if (el.getAttribute('curIndex') == undefined)
+            el.setAttribute('curIndex', 0);
+
+        var curIndex = el.getAttribute('curIndex');
+        var curStr = el.getAttribute('typewriterdata');
+        el.innerHTML += curStr.charAt(curIndex);
+        curIndex++;
+        el.setAttribute('curIndex', curIndex);
+
+        if (curIndex < curStr.length)
+            setTimeout(callback, myDelay );
+        else
+        {
+            if (el.getAttribute('nextline') != undefined)
+            {
+                var nextTgt = el.getAttribute('nextline');
+                typeWriter( document.getElementById(nextTgt) );
+            }
+        }
+
+        function callback(){ typeWriter(el); }
+    }
+
+    function mInit()
+    {
+        window.setTimeout(function() {
+          typeWriter( document.getElementById('about') );
+        }, 2000);
+        window.setTimeout(function() {
+          typeWriter( document.getElementById('more') );
+        }, 22000);
+        window.setTimeout(function() {
+          typeWriter( document.getElementById('follow-along') );
+        }, 27300);
+    //  var i, n, elementList;
+    //  elementList = document.getElementsByClassName('autoType');
+    //  forEachNode(elementList, typeWriter);
+    //  n = elementList.length;
+    //  for (i=0; i<n; i++)
+    //      typeWriter( elementList[i] );
+    }
+
+    </script>
+    <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
