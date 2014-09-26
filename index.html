@@ -1,22 +1,25 @@
 ---
 layout: default
+keydelay: 40
 ---
 
 <div class="home">
 
   <p><strong>Patalyze</strong> is an experiment exploring publicly available patent data.</p>
 
-  <p id="about" keydelay="44" typewriterdata="With on average 28929
-  patents being published every week by the USPTO in 2013 alone we
-  believe there are interesting questions that can by answered by that
-  data. Who are the most active patent authors for companies like
-  Apple or Tesla? Do they file patents with people outside of their
-  respective companies?  If so, for which companies do these people
-  work?" nextline="more"></p>
-  <p><span id="more" keydelay="44" typewriterdata="There are many more
-  questions we want to answer." nextline="follow-along"></span>
-    <a id="follow-along" keydelay="44" onclick="show_form()"
-    href="#" typewriterdata="Follow along as we do."></a></p>
+  <p id="about" keydelay="{{page.keydelay}}" typewriterdata="With on
+  average 28929 patents being published every week by the USPTO in
+  2013 alone we believe there are interesting questions that can be
+  answered by that data. Who are the most active patent authors for
+  companies like Apple or Tesla? Do they file patents with people
+  outside of their respective companies?  If so, for which companies
+  do these people work?" nextline="more"></p>
+  <p><span id="more" keydelay="{{page.keydelay}}"
+  typewriterdata="There are many more questions we want to answer."
+  nextline="follow-along"></span>
+    <a id="follow-along" keydelay="{{page.keydelay}}"
+    onclick="show_form()" href="#" typewriterdata="Follow along as we
+    do."></a></p>
 
   <!-- Begin MailChimp Signup Form -->
   <div id="mc_embed_signup">
