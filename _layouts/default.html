@@ -26,7 +26,7 @@
 
     window.addEventListener('load', mInit, false);
 
-    function typeWriter(el)
+    function typeWriter(el, nextlineDelay)
     {
         var myDelay = el.getAttribute('keyDelay');
 
@@ -45,24 +45,20 @@
         {
             if (el.getAttribute('nextline') != undefined)
             {
-                var nextTgt = el.getAttribute('nextline');
-                typeWriter( document.getElementById(nextTgt) );
+                setTimeout(function (){
+                       var nextTgt = el.getAttribute('nextline');
+                       typeWriter( document.getElementById(nextTgt), nextlineDelay );
+                    }, nextlineDelay);
             }
         }
 
-        function callback(){ typeWriter(el); }
+        function callback(){ typeWriter(el, nextlineDelay); }
     }
 
     function mInit() {
         window.setTimeout(function() {
-          typeWriter( document.getElementById('about') );
+          typeWriter( document.getElementById('about'), 600 );
         }, 2000);
-        window.setTimeout(function() {
-          typeWriter( document.getElementById('more') );
-        }, 22000);
-        window.setTimeout(function() {
-          typeWriter( document.getElementById('follow-along') );
-        }, 25800);
     //  var i, n, elementList;
     //  elementList = document.getElementsByClassName('autoType');
     //  forEachNode(elementList, typeWriter);
@@ -72,7 +68,8 @@
     }
 
     function show_form (){
-      document.getElementById("mc_embed_signup").setAttribute("class", "visible")
+      document.getElementById("mc_embed_signup").setAttribute("class", "visible");
+      document.getElementById("mce-EMAIL").focus();
     }
     </script>
     <script>
