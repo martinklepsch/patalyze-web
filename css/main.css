@@ -22,6 +22,8 @@
     font-style: normal;
 }
 
+strong { font-weight: 900 }
+
 * {
   margin: 0;
   padding: 0;
