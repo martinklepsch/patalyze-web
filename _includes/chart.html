@@ -2,7 +2,6 @@
 <style>
 
 svg#chart {
-  position: absolute;
   line-height: 0;
   font-size: 0;
   width: 100%;
@@ -44,7 +43,7 @@ svg#chart {
         {"inventors": 8221, "patents": 8674, "date": "200108"},
         {"inventors": 22191, "patents": 24023, "date": "200301"},
         {"inventors": 27208, "patents": 29866, "date": "201206"},
-        {"inventors": 50014, "patents": 56410, "date": "2001"},
+        // {"inventors": 50014, "patents": 56410, "date": "2001"},
         {"inventors": 27461, "patents": 29835, "date": "201408"},
         {"inventors": 23490, "patents": 25637, "date": "201210"},
         {"inventors": 22723, "patents": 24523, "date": "200902"},
@@ -104,7 +103,7 @@ svg#chart {
         {"inventors": 28512, "patents": 31170, "date": "201103"},
         {"inventors": 29154, "patents": 31928, "date": "201211"},
         {"inventors": 23901, "patents": 25937, "date": "200409"},
-        {"inventors": 234383, "patents": 283215, "date": "2014"},
+        // {"inventors": 234383, "patents": 283215, "date": "2014"},
         {"inventors": 19036, "patents": 20879, "date": "200602"},
         {"inventors": 265505, "patents": 321182, "date": "2011"},
         {"inventors": 28682, "patents": 31565, "date": "201112"},
@@ -215,7 +214,8 @@ svg#chart {
         {"inventors": 25148, "patents": 27214, "date": "201003"},
         {"inventors": 21493, "patents": 23259, "date": "200210"},
         {"inventors": 1849, "patents": 1944, "date": "200105"},
-        {"inventors": 20736, "patents": 22722, "date": "200609"}]
+        {"inventors": 20736, "patents": 22722, "date": "200609"}
+    ];
 
     var createData = function() {
     var startYear = _.random(1995, 2006);
@@ -244,14 +244,14 @@ svg#chart {
     $$.root = d3.select(root);
     $$.height = 500; // $$.root.node().getBoundingClientRect().height;
     $$.width = $$.root.node().getBoundingClientRect().width;
-    $$.radius = [10, 50];
+    $$.radius = [20, 50];
 
     $$.margins = {
       hoverRect: -8,
       hover: 10,
       years: 10,
-      left: $$.radius[0] + 5,
-      right: $$.radius[1] + 5,
+      left: $$.radius[0] + 40,
+      right: $$.radius[1] + 40,
       bottom: 50,
       top: 80
     };
@@ -270,8 +270,9 @@ svg#chart {
     // filter data-points according to screen-size
     $$.data = (function(data) {
       // how many data-points can be shown?
-      var maxPoints = $$.width / ($$.radius[1] * 2);
-      var rejectEvery = Math.round(data.length / maxPoints);
+      var bias = 0.2;
+      var maxPoints = ($$.width - ($$.margins.left + $$.margins.right))  / ($$.radius[1] * 2);
+      var rejectEvery = Math.min(Math.round((data.length / maxPoints) + bias), 3);
 
       // reject data-points according to screen-size
       return _.filter($$.data, function(d, i) {
@@ -297,7 +298,7 @@ svg#chart {
         .range($$.ranges.x)
         .domain(d3.extent($$.data, accessors.date)),
 
-      size: d3.scale.linear()
+      size: d3.scale.pow().exponent(2)
         .range($$.ranges.circles)
         .domain(d3.extent($$.data, accessors.inventors))
     };
@@ -502,7 +503,15 @@ svg#chart {
 
   };
 
-  var data = createData();
+  var data = _.chain(statistics).filter(function(d) {
+    return d.date.length === 4;
+  }).map(function(d) {
+    var date = new Date();
+    date.setFullYear(d.date);
+    d.date = date;
+    return d;
+  }).value();
+
   drawChart('#chart', data);
 
   window.onresize = function(event) {
