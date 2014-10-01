@@ -499,6 +499,21 @@ svg#chart {
 
     }, $$.duration);
 
+    var updateText = function() {
+      var elem = $$.root.node();
+      var position = elem.offsetTop;
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+      var intoSvg = (viewportHeight + scrollTop) - position;
+      intoSvg = Math.max(intoSvg, 0);
+      intoSvg = Math.min(intoSvg, $$.height);
+      var dateText = d3.selectAll('.date-text');
+      dateText.attr('y', intoSvg - $$.margins.years);
+      requestAnimationFrame(updateText);
+    };
+
+    requestAnimationFrame(updateText);
+
     return $$;
 
   };
@@ -517,5 +532,6 @@ svg#chart {
   window.onresize = function(event) {
     drawChart('#chart', data);
   };
+
 })();
 </script>
