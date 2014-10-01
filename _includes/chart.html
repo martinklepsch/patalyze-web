@@ -1,0 +1,308 @@
+<svg id="chart"></svg>
+<style>
+
+svg#chart {
+  width: 100%;
+  height: 500px;
+}
+
+.date-text, .hover-text-inventors, .hover-text-patents {
+  font: normal 12px "Fira Mono", "Courier New", Helvetica, Arial, sans-serif;
+  fill: #B7B7B7;
+  pointer-events: none;
+}
+
+.hover-circle, .hover-rect {
+  fill: #F7F7F7;
+  pointer-events: none;
+}
+
+.circle-inner {
+  fill: #D7D7D7;
+}
+
+.line {
+  stroke: #B7B7B7;
+}
+
+</style>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script>
+
+var createData = function() {
+  var startYear = _.random(1995, 2006);
+  return _.range(13).map(function(i) {
+    var date = new Date();
+    date.setFullYear(startYear + i);
+    return {
+      inventors: _.random(50, 10000) * i,
+      patents: _.random(50, 10000) * i,
+      date: date
+    }
+  });
+};
+
+var Chart = function Chart(root) {
+
+  $$ = this;
+
+  $$.root = d3.select(root);
+  $$.height = 500; // $$.root.node().getBoundingClientRect().height;
+  $$.width = $$.root.node().getBoundingClientRect().width;
+  $$.margins = {
+    hoverRect: -8,
+    hover: 10,
+    years: 10,
+    left: 40,
+    right: 200,
+    bottom: 50,
+    top: 80
+  };
+  $$.ranges = {
+    x: [$$.margins.left, $$.width - $$.margins.right],
+    y: [$$.margins.top, $$.height - $$.margins.bottom].reverse(),
+    circles: [10, 50]
+  };
+  $$.duration = 1000;
+
+
+  Chart.prototype.update = function(data) {
+
+    // sort data, so the youngest elements are appended first (tooltip-hover)
+    $$.data = _.sortBy(data, function(d) {
+      return -d.date.getTime();
+    });
+
+    var accessors = {
+      patents: _.property('patents'),
+      date: _.property('date'),
+      inventors: _.property('inventors')
+    };
+
+    var _scales = {
+      y: d3.scale.linear()
+        .range($$.ranges.y)
+        .domain(d3.extent($$.data, accessors.patents)),
+
+      x: d3.time.scale()
+        .range($$.ranges.x)
+        .domain(d3.extent($$.data, accessors.date)),
+
+      size: d3.scale.linear()
+        .range($$.ranges.circles)
+        .domain(d3.extent($$.data, accessors.inventors))
+    };
+
+    var scales = {
+      x: _.compose(_scales.x, accessors.date),
+      y: _.compose(_scales.y, accessors.patents),
+      size: _.compose(_scales.size, accessors.inventors)
+    };
+
+    var add = function(i) {
+      return function(j) {
+        return j + i;
+      };
+    };
+
+    var elements = [
+      {
+        type: 'text',
+        class: 'date-text',
+        attr: {opacity: 0},
+        update: function(selection) {
+          return selection.attr({
+            opacity: 1,
+            y: $$.height - $$.margins.years,
+            x: _.compose(add($$.margins.years), scales.x)
+          }).text(function(d) {
+            return accessors.date(d).getFullYear();
+          })
+        }
+      },
+      {
+        type: 'line',
+        class: 'line',
+        attr: {
+          y1: $$.height,
+          y2: $$.height
+        },
+        update: function(selection) {
+          return selection.attr({
+            x1: scales.x,
+            x2: scales.x,
+            y1: $$.height,
+            y2: scales.y
+          });
+        }
+      },
+      {
+        type: 'circle',
+        class: 'hover-circle',
+        attr: {opacity: 0},
+        update: function(selection) {
+          return selection.attr({
+            r: _.compose(function(i) {
+                return i + Math.max(5, 25 - i);
+              }, scales.size),
+            cy: scales.y,
+            cx: scales.x
+          });
+        }
+      },
+      {
+        type: 'rect',
+        class: 'hover-rect',
+        attr: {opacity: 0},
+        update: function(selection) {
+          // hover-text font-size 12 and line-height of 14
+          var height = (2 * 12) + 2 + (2 * $$.margins.hover);
+          return selection.attr({
+            y: _.compose(add(-height/2), scales.y),
+            x: function(d) {
+              return scales.size(d) + scales.x(d) + $$.margins.hoverRect;
+            },
+            height: height
+          })
+        }
+      },
+      {
+        type: 'text',
+        class: 'hover-text-patents',
+        attr: {opacity: 0},
+        update: function(selection) {
+          return selection.attr({
+            y: _.compose(add(-3), scales.y),
+            x: function(d) {
+              return scales.size(d) + scales.x(d) + $$.margins.hover;
+            },
+          }).text(_.compose(add(' patents'), accessors.patents));
+        }
+      },
+      {
+        type: 'text',
+        class: 'hover-text-inventors',
+        attr: {opacity: 0, dy: 14},
+        update: function(selection) {
+          return selection.attr({
+            y: _.compose(add(-3), scales.y),
+            x: function(d) {
+              return scales.size(d) + scales.x(d) + $$.margins.hover;
+            },
+          }).text(_.compose(add(' inventors'), accessors.patents));
+        }
+      },
+      {
+        type: 'circle',
+        class: 'circle-inner',
+        attr: {
+          r: 0,
+          cy: $$.ranges.y[0]
+        },
+        update: function(selection) {
+          return selection.attr({
+            r: scales.size,
+            cy: scales.y,
+            cx: scales.x
+          });
+        }
+      }
+    ];
+
+    var dataKey = function(d) {
+      return d.date.getFullYear();
+    };
+
+    var gs = $$.root.selectAll('.g-container')
+      .data($$.data, dataKey);
+
+    var gsEnter = gs.enter()
+      .append('g')
+      .attr('class', 'g-container')
+      .attr('opacity', 1);
+
+    gs.on('mouseover', null);
+    gs.on('mouseout', null);
+
+    gsEnter.each(function(d) {
+      var elem = d3.select(this);
+      _.each(elements, function(d) {
+        elem.append(d.type)
+          .attr('class', d.class)
+          .attr(d.attr || {});
+      });
+
+    });
+
+    gs.exit().transition()
+      .duration($$.duration)
+      .attr('opacity', 0)
+      .remove();
+
+    _.each(elements, function(d) {
+      var selection = $$.root.selectAll('.' + d.class).data($$.data, dataKey);
+      selection.transition().duration($$.duration).call(d.update);
+    });
+
+    // add listeners after animation is done
+    setTimeout(function(){
+
+      gs.on('mouseover', function() {
+        var elem = d3.select(this);
+        var rect = elem.select('.hover-rect');
+        var textPatents = elem.select('.hover-text-patents');
+        var textInventors = elem.select('.hover-text-inventors');
+        var hoverCircle = elem.select('.hover-circle');
+
+        _.each([textPatents, textInventors, hoverCircle], function(d) {
+          d.transition().duration($$.duration/2).attr('opacity', 1);
+        });
+
+        var width = Math.max(
+          textPatents.node().getComputedTextLength(),
+          textInventors.node().getComputedTextLength()) + $$.margins.hover * 2 + -$$.margins.hoverRect;
+
+        rect.transition()
+          .duration($$.duration/2).attr('opacity', 1)
+          .attr('width', width);
+
+      });
+
+      gs.on('mouseout', function() {
+        var elem = d3.select(this);
+        var rect = elem.select('.hover-rect');
+        var textPatents = elem.select('.hover-text-patents');
+        var textInventors = elem.select('.hover-text-inventors');
+        var hoverCircle = elem.select('.hover-circle');
+
+        _.each([rect, textPatents, textInventors, hoverCircle], function(d) {
+          d.transition().duration($$.duration/2).attr('opacity', 0);
+        });
+
+      });
+
+    }, $$.duration);
+
+    return $$;
+
+  };
+
+  return $$;
+
+};
+
+var chart = new Chart('#chart');
+chart.update(createData());
+
+var update = function() {
+  setTimeout(function() {
+    chart.update(createData());
+    update();
+  }, 3000);
+};
+
+// update();
+
+</script>
