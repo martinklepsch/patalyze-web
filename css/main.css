@@ -59,7 +59,8 @@ a:visited { color: #205caa; }
 /* ----------------------------------------------------------*/
 
 .page-content {padding-top: 130px;}
-.home {margin-bottom: -50px;}
+/* .home {z-index: 100; margin-bottom: -50px} */
+/* #chart { z-index: -10 } */
 p {margin: 1.4em 0;}
 
 /* Mailchimp signup form */

@@ -217,7 +217,7 @@ svg#chart {
         {"inventors": 20736, "patents": 22722, "date": "200609"}
     ];
 
-    var createData = function() {
+  var createData = function() {
     var startYear = _.random(1995, 2006);
     return _.range(13).map(function(i) {
       var date = new Date();
@@ -231,6 +231,16 @@ svg#chart {
     });
   };
 
+  var viewport = function (){
+    var e = window;
+    var a = 'inner';
+    if (!('innerWidth' in window)){
+        a = 'client';
+        e = document.documentElement || document.body;
+    }
+    return { width : e[ a+'Width' ] , height : e[ a+'Height' ] }
+  }
+
   var drawChart = function(root, data) {
 
     var temp = [];
@@ -243,7 +253,7 @@ svg#chart {
     $$ = this;
     $$.root = d3.select(root);
     $$.height = 500; // $$.root.node().getBoundingClientRect().height;
-    $$.width = $$.root.node().getBoundingClientRect().width;
+    $$.width = viewport().width;
     $$.radius = [20, 50];
 
     $$.margins = {
