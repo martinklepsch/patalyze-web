@@ -11,7 +11,7 @@ svg#chart {
 
 .date-text, .hover-text-inventors, .hover-text-patents, .text-patents, .text-inventors {
   font: normal 12px "Fira Mono", "Courier New", Helvetica, Arial, sans-serif;
-  fill: #B7B7B7;
+  fill: #858585;
   pointer-events: none;
 }
 
@@ -239,7 +239,7 @@ svg#chart {
     });
 
     data = temp;
-      
+
     $$ = this;
     $$.root = d3.select(root);
     $$.height = 500; // $$.root.node().getBoundingClientRect().height;
@@ -253,7 +253,7 @@ svg#chart {
       left: $$.radius[0] + 40,
       right: $$.radius[1] + 40,
       bottom: 50,
-      top: 80
+      top: 100
     };
     $$.ranges = {
       x: [$$.margins.left, $$.width - $$.margins.right],

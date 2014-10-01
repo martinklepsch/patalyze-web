@@ -58,18 +58,14 @@ a:visited { color: #205caa; }
 /* Page Content styles */
 /* ----------------------------------------------------------*/
 
-.page-content {
-  padding-top: 130px;
-}
-
-p {
-  margin: 1.4em 0;
-}
+.page-content {padding-top: 130px;}
+.home {margin-bottom: -50px;}
+p {margin: 1.4em 0;}
 
 /* Mailchimp signup form */
 /* ----------------------------------------------------------*/
-#mc_embed_signup { display: none }
-#mc_embed_signup.visible { display: block }
+#mc_embed_signup { opacity: 0; transition: .3s }
+#mc_embed_signup.visible { opacity: 1 }
 
 .mc-field-group { float: left; margin-right: 2em }
 
