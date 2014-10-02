@@ -1,4 +1,5 @@
-<svg id="chart"></svg>
+<!-- outer div for firefox -->
+<div><svg id="chart"></svg></div>
 <style>
 
 svg#chart {
@@ -510,7 +511,7 @@ svg#chart {
     }, $$.duration);
 
     var updateText = function() {
-      var elem = $$.root.node();
+      var elem = $$.root.node().parentNode;
       var position = elem.offsetTop;
       var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
       var viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
